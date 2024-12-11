@@ -1,0 +1,2 @@
+#!/bin/bash
+./my_hotel_merger "$1" "$2"
