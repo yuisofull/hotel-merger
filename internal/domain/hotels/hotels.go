@@ -5,11 +5,11 @@ type Hotel struct {
 	DestinationId int    `json:"destination_id"`
 	Name          string `json:"name"`
 	Location      struct {
-		Lat     float64 `json:"lat"`
-		Lng     float64 `json:"lng"`
-		Address string  `json:"address"`
-		City    string  `json:"city"`
-		Country string  `json:"country"`
+		Lat     *float64 `json:"lat"`
+		Lng     *float64 `json:"lng"`
+		Address string   `json:"address"`
+		City    string   `json:"city"`
+		Country string   `json:"country"`
 	} `json:"location"`
 	Description string `json:"description"`
 	Amenities   struct {

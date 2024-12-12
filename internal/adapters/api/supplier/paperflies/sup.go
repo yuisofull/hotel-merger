@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"hotel-merger/domain/hotels"
 	"net/http"
+	"strings"
 )
 
 type HotelModel struct {
@@ -62,9 +63,15 @@ func (s *supplier) FillHotel(hotel *hotels.Hotel) {
 	if paperfliesHotel, ok := s.Hotels[hotel.Id]; ok {
 		hotel.DestinationId = cmp.Or(hotel.DestinationId, paperfliesHotel.DestinationId)
 		hotel.Name = cmp.Or(hotel.Name, paperfliesHotel.HotelName)
-		hotel.Location.Address = cmp.Or(hotel.Location.Address, paperfliesHotel.Location.Address)
-		hotel.Location.Country = cmp.Or(hotel.Location.Country, paperfliesHotel.Location.Country)
-		hotel.Description = cmp.Or(hotel.Description, paperfliesHotel.Details)
+		if strings.Compare(hotel.Location.Address, paperfliesHotel.Location.Address) == -1 {
+			hotel.Location.Address = paperfliesHotel.Location.Address
+		}
+		if strings.Compare(hotel.Location.Country, paperfliesHotel.Location.Country) == -1 {
+			hotel.Location.Country = paperfliesHotel.Location.Country
+		}
+		if strings.Compare(hotel.Description, paperfliesHotel.Details) == -1 {
+			hotel.Description = paperfliesHotel.Details
+		}
 		if len(hotel.Amenities.General) == 0 {
 			hotel.Amenities.General = paperfliesHotel.Amenities.General
 		}

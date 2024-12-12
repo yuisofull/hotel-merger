@@ -6,6 +6,7 @@ import (
 	"hotel-merger/common"
 	"hotel-merger/domain/hotels"
 	"net/http"
+	"strings"
 )
 
 type HotelModel struct {
@@ -38,9 +39,17 @@ func (s *supplier) FillHotel(hotel *hotels.Hotel) {
 	if patagoniaHotel, ok := s.Hotels[hotel.Id]; ok {
 		hotel.DestinationId = cmp.Or(hotel.DestinationId, patagoniaHotel.Destination)
 		hotel.Name = cmp.Or(hotel.Name, patagoniaHotel.Name)
-		hotel.Location.Lat = cmp.Or(hotel.Location.Lat, float64(patagoniaHotel.Lat))
-		hotel.Location.Lng = cmp.Or(hotel.Location.Lng, float64(patagoniaHotel.Lng))
-		hotel.Location.Address = cmp.Or(hotel.Location.Address, patagoniaHotel.Address)
+		if patagoniaHotel.Lat != 0 {
+			tmp := float64(patagoniaHotel.Lat)
+			hotel.Location.Lat = cmp.Or(hotel.Location.Lat, &tmp)
+		}
+		if patagoniaHotel.Lng != 0 {
+			tmp := float64(patagoniaHotel.Lng)
+			hotel.Location.Lng = cmp.Or(hotel.Location.Lng, &tmp)
+		}
+		if strings.Compare(hotel.Location.Address, patagoniaHotel.Address) == -1 {
+			hotel.Location.Address = patagoniaHotel.Address
+		}
 		hotel.Description = cmp.Or(hotel.Description, patagoniaHotel.Info)
 		if len(hotel.Amenities.General) == 0 {
 			hotel.Amenities.General = patagoniaHotel.Amenities

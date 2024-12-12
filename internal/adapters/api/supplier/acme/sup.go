@@ -6,6 +6,7 @@ import (
 	"hotel-merger/common"
 	"hotel-merger/domain/hotels"
 	"net/http"
+	"strings"
 )
 
 type HotelModel struct {
@@ -52,12 +53,29 @@ func (s *supplier) FillHotel(hotel *hotels.Hotel) {
 		hotel.Id = cmp.Or(hotel.Id, acmeHotel.Id)
 		hotel.DestinationId = cmp.Or(hotel.DestinationId, acmeHotel.DestinationId)
 		hotel.Name = cmp.Or(hotel.Name, acmeHotel.Name)
-		hotel.Location.Lat = cmp.Or(hotel.Location.Lat, float64(acmeHotel.Latitude))
-		hotel.Location.Lng = cmp.Or(hotel.Location.Lng, float64(acmeHotel.Longitude))
-		hotel.Location.Address = cmp.Or(hotel.Location.Address, acmeHotel.Address)
-		hotel.Location.City = cmp.Or(hotel.Location.City, acmeHotel.City)
-		hotel.Location.Country = cmp.Or(hotel.Location.Country, acmeHotel.Country)
-		hotel.Description = cmp.Or(hotel.Description, acmeHotel.Description)
+		if acmeHotel.Latitude != 0 {
+			tmp := float64(acmeHotel.Latitude)
+			hotel.Location.Lat = cmp.Or(hotel.Location.Lat, &tmp)
+		}
+		if acmeHotel.Longitude != 0 {
+			tmp := float64(acmeHotel.Longitude)
+			hotel.Location.Lng = cmp.Or(hotel.Location.Lng, &tmp)
+		}
+		if acmeHotel.PostalCode != "" {
+			hotel.Location.Address = cmp.Or(hotel.Location.Address, acmeHotel.PostalCode)
+		}
+		if strings.Compare(hotel.Location.Address, acmeHotel.Address) == -1 {
+			hotel.Location.Address = acmeHotel.Address
+		}
+		if strings.Compare(hotel.Location.City, acmeHotel.City) == -1 {
+			hotel.Location.City = acmeHotel.City
+		}
+		if strings.Compare(hotel.Location.Country, acmeHotel.Country) == -1 {
+			hotel.Location.Country = acmeHotel.Country
+		}
+		if strings.Compare(hotel.Description, acmeHotel.Description) == -1 {
+			hotel.Description = acmeHotel.Description
+		}
 	}
 }
 
